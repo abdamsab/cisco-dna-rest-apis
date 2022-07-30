@@ -8,9 +8,9 @@ token = ''
 
 def get_device_id(device_json):
     for device in device_json['response']:
-        print("Fetching Interfaces for Device Id ----> {}".format(device['macAddress']))
+        print("Fetching Interfaces for Device Id ----> {}".format(device['id']))
         print('\n')
-        get_device_int(device['macAddress'])
+        get_device_int(device['id'])
         print('\n')
         
         
