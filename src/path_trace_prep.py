@@ -2,6 +2,7 @@ from email import header
 import requests
 from requests.auth import HTTPBasicAuth
 import argparse
+import json
 from dnac_config import DNAC_IP, DNAC_PORT, DNAC_USER, DNAC_PASSWORD
 from pprint import pprint
 
@@ -76,12 +77,36 @@ def get_interface(id):
     interface = response.json()['response']
     print_connected_interface(interface)
  
+
+
+
+
 def perform_flow_analysis():
     url = "https://{}/api/v1/flow-analysis".format(DNAC_IP)
     hdr = {'x-auth-token': ticket, 'content-type': 'application/json'}
-    response = requests.get(url, headers=hdr, verify=False)
-    flow_analysis = response.json()
-    pprint(flow_analysis)
+    param = {
+        'destIP': destination_ip,
+        'periodicRefresh': False,
+        'sourceIP': source_ip
+    }
+    response = requests.get(url, data=json.dumps(param), headers=hdr, verify=False)
+    path_json = response.json()
+    pprint(path_json)
+    flow_id = path_json['response']['flowAnalysisId']
+    print("Path Trace Initiated! Path ID -----> ", flow_id)
+    print("Retrieving Path Trace Results...... ")
+    retrieve_path_results(flow_id)
+
+
+
+
+def retrieve_path_results(flow_id):
+    url = "https://{}/api/v1/flow-analysis/{}".format(DNAC_IP, flow_id)
+    hdr = {'x-auth-token': ticket, 'content-type': 'application/json'}
+    path_result = requests.get(url, headers=hdr, verify=False)
+    print(json.dumps(path_result.json(), indent=4, sort_keys=True))
+
+
 
 
 def print_host(host_list):
