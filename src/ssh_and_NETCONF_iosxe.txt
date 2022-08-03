@@ -1,0 +1,1 @@
+ssh -oHostKeyAlgorithms=+ssh-dss developer@sandbox-iosxe-recomm-1.cisco.com -p 830 -s netconf
